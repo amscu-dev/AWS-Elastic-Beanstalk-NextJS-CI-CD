@@ -2,20 +2,20 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Home from "@/app/page";
 
-jest.mock("@/lib/flagsmith", () => ({
+jest.mock("@/components/FeatureTest", () => ({
   __esModule: true,
-  default: {
-    getEnvironmentFlags: jest.fn().mockResolvedValue({
-      isFeatureEnabled: jest.fn().mockReturnValue(false),
-    }),
-  },
+  default: () => <div>This is a feature flag</div>,
+}));
+
+jest.mock("@/components/ui/Loader", () => ({
+  __esModule: true,
+  default: () => <div>Loading...</div>,
 }));
 
 describe("Home Page", () => {
   beforeEach(async () => {
     jest.clearAllMocks();
-
-    render(await Home());
+    render(Home());
   });
 
   test("1. renders the Next.js logo with correct alt text", () => {
