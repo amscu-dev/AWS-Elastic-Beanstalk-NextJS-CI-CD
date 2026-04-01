@@ -1,0 +1,86 @@
+{
+  "name": "aws_elastic_beanstalk",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:ci": "eslint . --max-warnings=0",
+    "format:fix": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test:e2e": "npx playwright test --workers=4",
+    "test:e2e:ui": "npx playwright test --ui",
+    "test:e2e:headed": "npx playwright test --headed",
+    "test:e2e:debug": "npx playwright test --debug",
+    "test:e2e:report": "npx playwright show-report",
+    "test:e2e:codegen": "npx playwright codegen http://localhost:3000",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "typecheck": "tsc",
+    "prepare": "husky",
+    "lint-staged": "lint-staged",
+    "commit": "cz",
+    "knip": "knip --max-show-issues 5 --config knip.json --cache",
+    "knip:prod": "knip --max-show-issues 5 --config knip.json --cache --production",
+    "knip:clean": "knip --fix --allow-remove-files"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "npm run lint:fix",
+      "npm run format:check"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "overrides": {
+    "lodash": "4.17.23",
+    "commitizen": {
+      "inquirer": {
+        "external-editor": {
+          "tmp": "0.2.5"
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.13.11",
+    "next": "16.2.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "@playwright/test": "^1.58.2",
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.19.37",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.1",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "knip": "^6.1.1",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

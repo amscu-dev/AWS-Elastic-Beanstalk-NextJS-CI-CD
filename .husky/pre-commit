@@ -1,0 +1,3 @@
+echo "============= LINTING STAGED FILES ============="
+npx lint-staged
+
