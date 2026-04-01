@@ -4,5 +4,8 @@
   "editor.formatOnPaste": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always"
+  },
+  "workbench.editorAssociations": {
+    "git-rebase-todo": "default"
   }
 }
