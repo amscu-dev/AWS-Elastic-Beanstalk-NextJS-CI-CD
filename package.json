@@ -1,6 +1,6 @@
 {
-  "name": "aws_elastic_beanstalk",
-  "version": "0.1.0",
+  "name": "aws_elastic_beanstalk_nextjs_cicd",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -51,6 +51,7 @@
     }
   },
   "dependencies": {
+    "@changesets/cli": "^2.30.0",
     "@t3-oss/env-nextjs": "^0.13.11",
     "flagsmith-nodejs": "^8.0.2",
     "next": "16.2.1",
