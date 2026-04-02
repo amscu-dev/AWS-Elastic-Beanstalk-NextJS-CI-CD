@@ -144,7 +144,7 @@ jobs:
           echo "AWS_ENV_CNAME=$(aws elasticbeanstalk describe-environments \
             --application-name ${{ vars.AWS_EB_APP_NAME }} \
             --environment-names ${{ inputs.aws-env }} \
-            --query "Environments[0].Status" \
+            --query "Environments[0].CNAME" \
             --output text)" >> $GITHUB_OUTPUT
 
       - name: Notify on Slack
