@@ -65,7 +65,7 @@ jobs:
         if: inputs.aws-env == vars.AWS_EB_STAGING_ENV && inputs.github-env != 'staging'
         run: |
           echo "::error::Cannot deploy to staging using a non staging environment"
-          exit
+          exit 1
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
@@ -121,7 +121,7 @@ jobs:
       - name: Initialize EB
         run: |
           eb init ${{vars.AWS_EB_APP_NAME}} \
-          --platform ${{ vars.AWS_EB_PLATFORM }} \
+          --platform "${{ vars.AWS_EB_PLATFORM }}" \
           --region ${{ vars.AWS_REGION }}
 
       - name: Create a New Environment
