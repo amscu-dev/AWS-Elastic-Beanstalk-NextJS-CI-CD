@@ -44,7 +44,7 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-24.
+    runs-on: ubuntu-24.04
     outputs:
       aws-url: "http://${{ steps.get-aws-env-cname.outputs.AWS_ENV_CNAME }}"
     environment:

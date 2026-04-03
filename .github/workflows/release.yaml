@@ -76,7 +76,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "⏳ *<https://github.com/${{github.repository}}/releases/tag/v${{ steps.get-version.outputs.app_version }}|Version ${{ steps.get-version.outputs.app_version }}>* Released! Deployment should be in progress."
+                    "text": "⏳ *<https://github.com/${{github.repository}}/releases/tag/v${{ steps.get-version.outputs.app_version }}|Version ${{ steps.get-version.outputs.app_version }}>* Released! Deploy workflow should start now."
                   }
                 }
               ]
