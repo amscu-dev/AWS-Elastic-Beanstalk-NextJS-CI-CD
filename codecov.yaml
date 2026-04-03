@@ -24,7 +24,7 @@ profiling:
 component_management:
   individual_components:
     - component_id: app
-      name: App
+      name: app
       paths:
         - src/app/**
       statuses:
@@ -34,7 +34,7 @@ component_management:
           target: 80%
 
     - component_id: components
-      name: Components
+      name: components
       paths:
         - src/components/**
       statuses:
