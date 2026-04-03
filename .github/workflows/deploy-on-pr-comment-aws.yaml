@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: write
+    environment:
+      name: "staging"
     if: github.event.issue.pull_request && github.event.issue.state == 'open' && github.event.comment.body == '/deploy'
     steps:
       - name: Get Pull Request Head Ref
@@ -24,19 +26,156 @@ jobs:
             console.log(response.data)
             return response.data.head.ref
 
-      - name: Trigger a Branch Deploy
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Update Pull Request (Start)
         uses: actions/github-script@v6
+        continue-on-error: true
         with:
           script: |
-            const response = await github.rest.actions.createWorkflowDispatch({
+            const comment = `### ⏳ Deployment in progress...
+
+            [You can monitor the progress here.](https://github.com/${{github.repository}}/actions/runs/${{ github.run_id }})
+            `;
+
+            github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              workflow_id: "deploy.yaml",
-              ref: "${{ steps.get-head-ref.outputs.result }}",
-              inputs: {
-                "aws-env": `app-PR-${context.issue.number}`,
-                "github-env": "staging",
-                "report-pr": `${context.issue.number}`
-              }
+              issue_number: context.issue.number,
+              body: comment
             })
-            console.log(response)
+
+      - name: Checkout Reposiotry Code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.get-head-ref.outputs.result }}
+
+      - name: Setup Node Environment
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build App
+        run: npm  run build
+        env:
+          FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
+
+      - uses: actions/cache@v5
+        with:
+          path: ~/.cache/pip
+          key: ${{runner.os}}-pip
+
+      - name: Install Elastic Beanstalk
+        id: install-eb-cli
+        run: pip install awsebcli
+
+      - name: Get AWS ENV Name
+        id: get-aws-env-name
+        run: |
+          echo "AWS_ENV_NAME=$(aws elasticbeanstalk describe-environments \
+            --application-name ${{ vars.AWS_EB_APP_NAME }} \
+            --environment-names app-PR-${{ github.event.issue.number }} \
+            --query "Environments[0].EnvironmentName" \
+            --output text)" >> $GITHUB_OUTPUT
+
+      - name: Get AWS ENV Status
+        id: get-aws-env-status
+        run: |
+          echo "AWS_ENV_STATUS=$(aws elasticbeanstalk describe-environments \
+            --application-name ${{ vars.AWS_EB_APP_NAME }} \
+            --environment-names app-PR-${{ github.event.issue.number }} \
+            --query "Environments[0].Status" \
+            --output text)" >> $GITHUB_OUTPUT
+
+      - name: Initialize EB
+        run: |
+          eb init ${{vars.AWS_EB_APP_NAME}} \
+          --platform "${{ vars.AWS_EB_PLATFORM }}" \
+          --region ${{ vars.AWS_REGION }}
+
+      - name: Create a New Environment
+        if: steps.get-aws-env-name.outputs.AWS_ENV_NAME == 'None' || steps.get-aws-env-status.outputs.AWS_ENV_STATUS == 'Terminated'
+        run: |
+          eb create app-PR-${{ github.event.issue.number }} \
+          --instance-type ${{ vars.AWS_EB_ENV_INSTANCE_TYPE }} \
+          --single \
+          --cname app-PR-${{ github.event.issue.number }} \
+          --envvars FLAGSMITH_KEY=${{ secrets.FLAGSMITH_KEY }} \
+          --region ${{ vars.AWS_REGION }}
+
+      - name: Deploy if Environment Exists
+        if: steps.get-aws-env-name.outputs.AWS_ENV_NAME == format('app-PR-{0}', github.event.issue.number) && steps.get-aws-env-status.outputs.AWS_ENV_STATUS != 'Terminated'
+        run: eb deploy app-PR-${{ github.event.issue.number }}
+
+      - name: Get AWS ENV CNAME
+        id: get-aws-env-cname
+        run: |
+          echo "AWS_ENV_CNAME=$(aws elasticbeanstalk describe-environments \
+            --application-name ${{ vars.AWS_EB_APP_NAME }} \
+            --environment-names app-PR-${{ github.event.issue.number }} \
+            --query "Environments[0].CNAME" \
+            --output text)" >> $GITHUB_OUTPUT
+
+      - name: Notify on Slack
+        uses: slackapi/slack-github-action@v3.0.1
+        continue-on-error: true
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🚀 Deployment to AWS environment *app-PR-${{ github.event.issue.number }}* using *staging* GitHub wnvironment  was successfull. <http://${{ steps.get-aws-env-cname.outputs.AWS_ENV_CNAME }}|View Deployment>"
+                  }
+                }
+              ] 
+            }
+      - name: Update Pull Request (Success)
+        uses: actions/github-script@v6
+        if: success()
+        continue-on-error: true
+        with:
+          script: |
+            const comment = `### 🚀 Deployment Completed.
+
+            You can view the deployed environment here: http://${{ steps.get-aws-env-cname.outputs.AWS_ENV_CNAME }}`
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ github.event.issue.number }},
+              body: comment
+            })
+
+      - name: Update Pull Request (Failure)
+        uses: actions/github-script@v6
+        if: failure()
+        continue-on-error: true
+        with:
+          script: |
+            const comment = `### 🛑 Deployment Failed.
+
+            [View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ github.event.issue.number }},
+              body: comment
+            })
+      - name: Abort if Cancelled
+        if: cancelled() && steps.install-eb-cli.conclusion == 'success'
+        run: eb abort app-PR-${{ github.event.issue.number }}
