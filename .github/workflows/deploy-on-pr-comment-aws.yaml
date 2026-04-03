@@ -1,4 +1,6 @@
 name: Deploy PR Branch
+
+run-name: "Deploy PR #${{ github.event.issue.number }} by @${{ github.event.comment.user.login }}"
 on:
   issue_comment:
     types: [created]
@@ -8,8 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: write
+      pull-requests: write
     environment:
       name: "staging"
+      url: "http://${{ steps.get-aws-env-cname.outputs.AWS_ENV_CNAME }}"
     if: github.event.issue.pull_request && github.event.issue.state == 'open' && github.event.comment.body == '/deploy'
     steps:
       - name: Get Pull Request Head Ref
@@ -144,7 +148,7 @@ jobs:
               ] 
             }
       - name: Update Pull Request (Success)
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         if: success()
         continue-on-error: true
         with:
@@ -161,7 +165,7 @@ jobs:
             })
 
       - name: Update Pull Request (Failure)
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         if: failure()
         continue-on-error: true
         with:
