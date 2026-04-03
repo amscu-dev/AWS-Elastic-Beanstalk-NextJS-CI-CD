@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: Checkout Repository Code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup Node Environment
         uses: actions/setup-node@v6
