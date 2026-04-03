@@ -92,6 +92,7 @@ jobs:
     with:
       aws-env: ${{vars.AWS_EB_STAGING_ENV}}
       github-env: "staging"
+
   deploy-to-production:
     needs: run-tests
     uses: ./.github/workflows/deploy.yaml
