@@ -16,7 +16,6 @@ github_checks:
 comment:
   layout: "newheader, diff, flags, files"
 
-
 profiling:
   critical_files_paths:
     - src/app/*
@@ -43,7 +42,6 @@ component_management:
           target: 80%
         - type: patch
           target: 80%
-
 
 ignore:
   - "node_modules/**"
