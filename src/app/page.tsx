@@ -1,3 +1,4 @@
+import AppVersion from "@/components/AppVersion";
 import FeatureTest from "@/components/FeatureTest";
 import Loader from "@/components/ui/Loader";
 import Image from "next/image";
@@ -71,6 +72,7 @@ export default function Home() {
             Documentation
           </a>
         </div>
+        <AppVersion />
       </main>
     </div>
   );
