@@ -45,14 +45,12 @@ jobs:
         env:
           FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
 
-      - name: Debug .next Missing
-        run: ls -a
-
       - name: Upload Build artifacts
         uses: actions/upload-artifact@v6
         with:
           name: build
-          path: .next
+          path: .next/
+          include-hidden-files: true
 
       - name: Store Playwright`s Version
         id: playwright-version

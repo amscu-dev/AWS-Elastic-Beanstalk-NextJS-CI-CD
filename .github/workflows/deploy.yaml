@@ -93,10 +93,17 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Build App
+      - name: Build Project
         run: npm  run build
         env:
           FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
+
+      - name: Upload Build artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: build
+          path: .next/
+          include-hidden-files: true
 
       - uses: actions/cache@v5
         with:
