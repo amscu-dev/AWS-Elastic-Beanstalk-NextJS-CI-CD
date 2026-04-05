@@ -30,6 +30,7 @@ jobs:
     permissions:
       pull-requests: write
       deployments: write
+      id-token: write
     environment:
       name: ${{ inputs.github-env }}
       url: "http://${{ steps.get-aws-env-cname.outputs.AWS_ENV_CNAME }}"
@@ -47,8 +48,9 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
-          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          # aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          # aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          role-to-assume: arn:aws:iam::309071121308:role/nextjs_ci_cd_eb
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Update Pull Request (Start)
