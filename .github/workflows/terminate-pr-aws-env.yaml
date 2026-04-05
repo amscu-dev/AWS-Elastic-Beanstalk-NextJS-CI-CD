@@ -33,7 +33,7 @@ jobs:
         run: |
           echo "AWS_ENV_NAME=$(aws elasticbeanstalk describe-environments \
             --application-name ${{ vars.AWS_EB_APP_NAME }} \
-            --environment-names app-PR-${{ github.event.issue.number || github.event.pull_request.number }} \
+            --environment-names app-pr-${{ github.event.issue.number || github.event.pull_request.number }} \
             --query "Environments[0].EnvironmentName" \
             --output text)" >> $GITHUB_OUTPUT
 
@@ -42,7 +42,7 @@ jobs:
         run: |
           echo "AWS_ENV_STATUS=$(aws elasticbeanstalk describe-environments \
             --application-name ${{ vars.AWS_EB_APP_NAME }} \
-            --environment-names app-PR-${{ github.event.issue.number || github.event.pull_request.number }} \
+            --environment-names app-pr-${{ github.event.issue.number || github.event.pull_request.number }} \
             --query "Environments[0].Status" \
             --output text)" >> $GITHUB_OUTPUT
 
