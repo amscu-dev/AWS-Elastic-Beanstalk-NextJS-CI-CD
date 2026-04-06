@@ -12,3 +12,5 @@ jobs:
   run-tests:
     uses: ./.github/workflows/test-build.yaml
     secrets: inherit
+    permissions:
+      pull-requests: write
