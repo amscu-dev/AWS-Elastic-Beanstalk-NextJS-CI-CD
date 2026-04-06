@@ -43,6 +43,9 @@
   },
   "overrides": {
     "lodash": "4.18.1",
+    "markdownlint-cli2": {
+      "smol-toml": "1.6.1"
+    },
     "commitizen": {
       "inquirer": {
         "external-editor": {
@@ -73,6 +76,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "commitizen": "^4.3.1",
+    "cspell": "^10.0.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
@@ -83,6 +87,7 @@
     "jest-environment-jsdom": "^30.3.0",
     "knip": "^6.3.0",
     "lint-staged": "^16.4.0",
+    "markdownlint-cli2": "^0.22.0",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",

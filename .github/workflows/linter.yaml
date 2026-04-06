@@ -1,0 +1,92 @@
+name: Lint Codebase
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_call:
+
+permissions:
+  contents: read # git permissions to repository pull/push
+  pull-requests: write # create a summary comment in PR
+  statuses: write # read/write to repository custom statuses and checks
+  packages: read
+
+jobs:
+  lint:
+    name: Lint Codebase
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install Dependencies
+        id: install
+        run: npm ci
+
+      #############################
+      # custom DEFAULT_BRANCH for repos where PR target isn't always main/master
+      #############################
+      - name: Set DEFAULT_BRANCH to PR target
+        # if base_ref has a value, this is a PR
+        # we save the PR target branch name to a variable for use in linter config
+        # we pass string between job steps by echoing to $GITHUB_ENV, making it available in $env later
+        if: ${{ github.base_ref != '' }}
+        run: |
+          echo "DEFAULT_BRANCH=${GITHUB_BASE_REF}" >> "$GITHUB_ENV"
+          echo "this is a PR branch. Let's only lint the files that are changed against the target branch '${GITHUB_BASE_REF}'"
+
+      - name: Set DEFAULT_BRANCH to current branch
+        # if base_ref has no value, this is just a commit on a branch
+        # we need to strip refs/heads from github.ref to find the current branch name
+        # then save the current branch name to a variable for use in linter config later
+        # we pass strings between job steps by echoing to $GITHUB_ENV, making it available in $env later
+        if: ${{ github.base_ref == '' }}
+        run: |
+          echo "DEFAULT_BRANCH=$(echo "$GITHUB_REF" | sed 's/refs\/heads\///')" >> "$GITHUB_ENV"
+          echo "this is just a branch push, not a PR."
+
+      # used as a debug step to ensure we're only linting all files on release branches
+      - name: Are we linting all files?
+        run: |
+          echo VALIDATE_ALL_CODEBASE=${{ !contains(github.event_name, 'pull_request') }}
+
+      - name: Load super-linter.env config
+        if: hashFiles('.github/super-linter.env') != ''
+        run: |
+          sed -E 's/^[[:space:]]+//; /^[[:space:]]*(#|$)/d' .github/super-linter.env >> "$GITHUB_ENV"
+
+      - name: Lint Codebase
+        id: super-linter
+        uses: super-linter/super-linter/slim@61abc07d755095a68f4987d1c2c3d1d64408f1f9 #v8.5.0
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # setting this to false means that only changed files will be scanned in each commit
+          VALIDATE_ALL_CODEBASE: ${{ !contains(github.event_name, 'pull_request') }}
+          FILTER_REGEX_EXCLUDE: >-
+            (^\.next/.*)|
+            (^node_modules/.*)|
+            (^coverage/.*)|
+            (^dist/.*)|
+            (^out/.*)|
+            (^playwright-report/.*)|
+            (^test-results/.*)|
+            (^\.turbo/.*)|
+            (^storybook-static/.*)|
+            (^tsconfig\.tsbuildinfo$)|
+            (^package-lock\.json$)
