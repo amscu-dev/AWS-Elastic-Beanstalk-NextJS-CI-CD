@@ -9,6 +9,7 @@ on:
         required: true
       SLACK_WEBHOOK_URL:
         required: true
+  workflow_dispatch:
 
 jobs:
   test-and-build:
