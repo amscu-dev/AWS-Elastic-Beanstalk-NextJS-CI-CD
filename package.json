@@ -31,16 +31,23 @@
     "version": "npx changeset",
     "check:merge-conflicts": "bash ./scripts/check-merge-conflicts.sh",
     "gitleaks": "docker run --rm -v \"%CD%:/source\" -w /source ghcr.io/gitleaks/gitleaks:latest detect --verbose",
-    "gitleaks:staged": "docker run --rm -v \"%CD%:/source\" -w /source ghcr.io/gitleaks/gitleaks:latest protect --staged --verbose"
+    "gitleaks:staged": "docker run --rm -v \"%CD%:/source\" -w /source ghcr.io/gitleaks/gitleaks:latest protect --staged --verbose",
+    "cspell": "cspell --no-must-find-files --gitignore --unique ."
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,yaml,yml}": [
+    "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
     ],
     "*.{md}": [
       "prettier --write",
       "markdownlint --ignore-path .markdownlintignore --fix"
+    ],
+    "*.{yaml,yml}": [
+      "prettier --write"
+    ],
+    "*.json": [
+      "prettier --write"
     ]
   },
   "config": {
