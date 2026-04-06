@@ -1,6 +1,9 @@
 echo "============= CHECKING MERGE CONFLICT MARKERS ============="
 npm run check:merge-conflicts
 
+echo "============= CHECKING SECRETS WITH GITLEAKS ============="
+npm run gitleaks:staged
+
 echo "============= LINTING STAGED FILES ============="
 npx lint-staged
 

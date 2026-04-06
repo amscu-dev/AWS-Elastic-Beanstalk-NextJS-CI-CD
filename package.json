@@ -27,7 +27,9 @@
     "knip:prod": "knip --max-show-issues 5 --config knip.json --cache --production",
     "knip:clean": "knip --fix --allow-remove-files",
     "version": "npx changeset",
-    "check:merge-conflicts": "bash ./scripts/check-merge-conflicts.sh"
+    "check:merge-conflicts": "bash ./scripts/check-merge-conflicts.sh",
+    "gitleaks": "docker run --rm -v \"%CD%:/source\" -w /source ghcr.io/gitleaks/gitleaks:latest detect --verbose",
+    "gitleaks:staged": "docker run --rm -v \"%CD%:/source\" -w /source ghcr.io/gitleaks/gitleaks:latest protect --staged --verbose"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,yaml}": [
