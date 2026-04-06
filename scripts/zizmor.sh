@@ -6,7 +6,7 @@ MODE=${1:-offline}
 if [ "$MODE" = "online" ]; then
   echo "Running zizmor in online mode..."
   docker run --rm -v "$(pwd):/src" \
-    -e GH_TOKEN=$(gh auth token) \
+    -e GH_TOKEN="$(gh auth token)" \
     -w /src \
     ghcr.io/zizmorcore/zizmor:latest \
     --config .github/linters/zizmor.yaml \
