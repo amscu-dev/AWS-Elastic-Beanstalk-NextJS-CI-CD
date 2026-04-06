@@ -11,6 +11,9 @@ concurrency:
 jobs:
   run-tests:
     uses: ./.github/workflows/test-build.yaml
-    secrets: inherit
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     permissions:
       pull-requests: write

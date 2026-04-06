@@ -14,6 +14,7 @@
     "lint:md:fix": "markdownlint --fix --ignore-path .markdownlintignore \"**/*.md\"",
     "format:fix": "prettier --write .",
     "format:check": "prettier --check .",
+    "format:sh": "prettier --write ./scripts/*.sh",
     "test:e2e": "npx playwright test --workers=4",
     "test:e2e:ui": "npx playwright test --ui",
     "test:e2e:headed": "npx playwright test --headed",
@@ -30,10 +31,14 @@
     "knip:clean": "knip --fix --allow-remove-files",
     "version": "npx changeset",
     "check:merge-conflicts": "bash ./scripts/check-merge-conflicts.sh",
-    "gitleaks": "docker run --rm -v \"%CD%:/source\" -w /source ghcr.io/gitleaks/gitleaks:latest detect --verbose",
-    "gitleaks:staged": "docker run --rm -v \"%CD%:/source\" -w /source ghcr.io/gitleaks/gitleaks:latest protect --staged --verbose",
     "cspell": "cspell --no-must-find-files --gitignore --unique .",
-    "actionlint": "docker run --rm -v \"%CD%:/source\" --workdir /source rhysd/actionlint:latest -color -config-file .github/linters/actionlint.yaml"
+    "gitleaks": "bash ./scripts/gitleaks.sh all",
+    "gitleaks:staged": "bash ./scripts/gitleaks.sh staged",
+    "actionlint": "bash ./scripts/actionlint.sh all",
+    "actionlint:staged": "bash ./scripts/actionlint.sh staged",
+    "zizmor:online": "bash ./scripts/zizmor.sh online",
+    "zizmor:offline": "bash ./scripts/zizmor.sh offline",
+    "zizmor:staged": "bash ./scripts/zizmor.sh staged"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -48,6 +53,9 @@
       "prettier --write"
     ],
     "*.json": [
+      "prettier --write"
+    ],
+    "*.sh": [
       "prettier --write"
     ]
   },
@@ -101,6 +109,7 @@
     "lint-staged": "^16.4.0",
     "markdownlint-cli": "^0.48.0",
     "prettier": "^3.8.1",
+    "prettier-plugin-sh": "^0.18.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",

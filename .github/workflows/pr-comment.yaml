@@ -2,7 +2,7 @@ name: PR Lifecycle Comments
 
 run-name: "PR Comment | #${{ github.event.pull_request.number }} by ${{ github.actor }}"
 on:
-  pull_request_target:
+  pull_request:
     types: [opened]
 
 jobs:

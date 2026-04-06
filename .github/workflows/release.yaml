@@ -11,6 +11,9 @@ concurrency:
 jobs:
   create-version-pr-or-release:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
     outputs:
       should-deploy: ${{steps.changesets.outputs.hasChangesets == 'false' }}
       # hasChangesets == 'false' => facem deploy oricand un pr fara changesets este push in main

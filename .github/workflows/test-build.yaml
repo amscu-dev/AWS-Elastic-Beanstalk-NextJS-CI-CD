@@ -2,6 +2,13 @@ name: Test & Build - Reusable Workflow
 
 on:
   workflow_call:
+    secrets:
+      CODECOV_TOKEN:
+        required: true
+      FLAGSMITH_KEY:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
 
 jobs:
   test-and-build:
@@ -11,6 +18,8 @@ jobs:
     steps:
       - name: Checkout Repository Code
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Setup Node Environment
         uses: actions/setup-node@v6

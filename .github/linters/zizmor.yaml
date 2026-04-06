@@ -1,0 +1,16 @@
+# https://docs.zizmor.sh/audits/
+rules:
+  unpinned-uses:
+    disable: true
+  template-injection:
+    disable: true
+  secrets-inherit:
+    ignore:
+      - release-deploy.yaml
+  secrets-outside-env:
+    ignore:
+      - release.yaml
+      - test-build.yaml
+  dangerous-triggers:
+    ignore:
+      - terminate-pr-aws-env.yaml
