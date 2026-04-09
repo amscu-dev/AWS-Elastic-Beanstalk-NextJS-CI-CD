@@ -1,6 +1,7 @@
 "use client";
 import { ReactNode } from "react";
 import ReactQueryProvider from "./ReactQueryProvider";
+import StoreContextProvider from "./ReduxStoreProvider";
 
 interface Props {
   children: ReactNode;
@@ -8,7 +9,9 @@ interface Props {
 export default function Providers({ children }: Props) {
   return (
     <>
-      <ReactQueryProvider>{children}</ReactQueryProvider>
+      <ReactQueryProvider>
+        <StoreContextProvider>{children}</StoreContextProvider>
+      </ReactQueryProvider>
     </>
   );
 }
