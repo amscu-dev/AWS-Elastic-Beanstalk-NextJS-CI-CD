@@ -7,6 +7,10 @@ jest.mock("@/features/featureA/services/post.hooks", () => ({
   useGetPostById: jest.fn(),
 }));
 
+jest.mock("@uidotdev/usehooks", () => ({
+  useIsClient: () => true,
+}));
+
 describe("Post", () => {
   test("renders post data correctly", () => {
     (useGetPostById as jest.Mock).mockReturnValue({
@@ -18,7 +22,7 @@ describe("Post", () => {
       },
     });
 
-    render(<Post />);
+    render(<Post id={1} />);
 
     expect(screen.getByText("ID: 1")).toBeInTheDocument();
     expect(screen.getByText("Title: Test title")).toBeInTheDocument();
