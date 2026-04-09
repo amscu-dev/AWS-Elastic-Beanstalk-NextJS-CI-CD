@@ -3,7 +3,11 @@ import FeatureTest from "@/components/FeatureTest";
 import Loader from "@/components/ui/Loader";
 import Image from "next/image";
 import { Suspense } from "react";
-import PostSuspense from "@/features/featureA/components/PostSuspense";
+
+import PostWithHydratationBoundary from "@/features/featureA/components/PostWithHydratationBoundary";
+import { ErrorBoundary } from "react-error-boundary";
+
+import PostErrorFallback from "@/features/featureA/components/PostErrorFallback";
 
 export const revalidate = 0;
 
@@ -14,8 +18,12 @@ export default function Home() {
         <Suspense fallback={<Loader />}>
           <FeatureTest />
         </Suspense>
-        <PostSuspense />
 
+        <ErrorBoundary FallbackComponent={PostErrorFallback}>
+          <Suspense fallback={<p>Loading...</p>}>
+            <PostWithHydratationBoundary />
+          </Suspense>
+        </ErrorBoundary>
         <Image
           className="dark:invert"
           src="/next.svg"

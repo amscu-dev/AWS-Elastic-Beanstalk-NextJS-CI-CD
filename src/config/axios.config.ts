@@ -2,8 +2,8 @@ import { OptionalConfig, RequiredConfig } from "@/types/axios.types";
 import axios, { AxiosError, AxiosInstance } from "axios";
 
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: "https://jsonplaceholder.typicode.com",
-  withCredentials: true,
+  baseURL: "http://localhost:3001",
+  // withCredentials: true,
   timeout: 10000,
 });
 

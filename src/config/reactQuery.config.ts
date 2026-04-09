@@ -4,7 +4,7 @@ import {
   QueryCache,
   QueryClientConfig,
 } from "@tanstack/react-query";
-
+import superjson from "superjson";
 // Jitter Strategy
 // Docs: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
 const decorrelatedRetryDelay = (attemptIndex: number) => {
@@ -51,7 +51,7 @@ const queryClientConfig: QueryClientConfig = {
   }),
   defaultOptions: {
     queries: {
-      staleTime: 0,
+      staleTime: 60 * 1000,
       retry: (failureCount, error) => {
         if (!isAppError(error)) return false;
 

@@ -8,14 +8,18 @@ import { postQueryKeys } from "../services/post.queryKeys";
 export default async function PostWithHydratationBoundary() {
   const queryClient = getQueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: postQueryKeys.byId(1),
-    queryFn: () => postsApi.getById(1),
-  });
+  try {
+    await queryClient.fetchQuery({
+      queryKey: postQueryKeys.byId(1),
+      queryFn: () => postsApi.getById(1),
+    });
+  } catch {
+    // return <p>error...</p>;
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Post />
+      <Post id={1} />
     </HydrationBoundary>
   );
 }

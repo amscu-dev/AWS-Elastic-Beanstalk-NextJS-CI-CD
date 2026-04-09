@@ -1,9 +1,8 @@
 import { ApiResponse } from "@/types/api.types";
 import { CreatePostDto, Post, UpdatePostDto } from "../types/post.types";
-
+import memoize from "fast-memoize";
 import {
-  useQuery,
-  UseQueryOptions,
+  UseSuspenseQueryOptions,
   UseMutationOptions,
   useMutation,
   useQueryClient,
@@ -13,7 +12,7 @@ import { postQueryKeys } from "./post.queryKeys";
 import { postsApi } from "./post.api";
 import { OptionalConfig } from "@/types/axios.types";
 import { AppError } from "@/types/errors.types";
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 
 // useMutation<TData, TError, TVariables, TContext>
 // TData      — what mutationFn returns (server response)
@@ -29,7 +28,7 @@ import { useRef } from "react";
 
 export const useGetAllPosts = <TData = Post[]>(
   queryConfig: Omit<
-    UseQueryOptions<ApiResponse<Post[]>, AppError, TData>,
+    UseSuspenseQueryOptions<ApiResponse<Post[]>, AppError, TData>,
     "queryKey" | "queryFn"
   >,
   optionalAxiosConfig?: Omit<OptionalConfig, "signal">,
@@ -43,19 +42,31 @@ export const useGetAllPosts = <TData = Post[]>(
   });
 };
 
+// Called only once no matter how many components use useSuspenseQuery
+const selectPost = memoize((response: ApiResponse<Post>) => {
+  console.log("Sa rulat select (transformare reala)");
+  return response.data;
+});
+
 export const useGetPostById = <TData = Post>(
   id: number,
   queryConfig?: Omit<
-    UseQueryOptions<ApiResponse<Post>, AppError, TData>,
+    UseSuspenseQueryOptions<ApiResponse<Post>, AppError, TData>,
     "queryKey" | "queryFn"
   >,
   optionalAxiosConfig?: Omit<OptionalConfig, "signal">,
 ) => {
+  // select its called only when ApiResponse<Post> change
+  // const select = useCallback((response: ApiResponse<Post>) => {
+  //   console.log("Sa rulat select");
+  //   return response.data as TData;
+  // }, []);
+
   return useSuspenseQuery<ApiResponse<Post>, AppError, TData>({
     queryKey: postQueryKeys.byId(id),
     queryFn: ({ signal }) =>
       postsApi.getById(id, { signal, ...optionalAxiosConfig }),
-    select: (response) => response.data as TData,
+    select: selectPost as (response: ApiResponse<Post>) => TData,
     ...queryConfig,
   });
 };
