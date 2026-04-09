@@ -13,7 +13,7 @@ import { postsApi } from "./post.api";
 import { OptionalConfig } from "@/types/axios.types";
 import { AppError } from "@/types/errors.types";
 import { useCallback, useRef } from "react";
-
+import { environmentManager } from "@tanstack/react-query";
 // useMutation<TData, TError, TVariables, TContext>
 // TData      — what mutationFn returns (server response)
 // TError     — error type
@@ -43,10 +43,31 @@ export const useGetAllPosts = <TData = Post[]>(
 };
 
 // Called only once no matter how many components use useSuspenseQuery
-const selectPost = memoize((response: ApiResponse<Post>) => {
-  console.log("Sa rulat select (transformare reala)");
-  return response.data;
-});
+
+// Singleton on browser (reutilised between re-renders)
+let browserSelectPost: ((response: ApiResponse<Post>) => Post) | undefined =
+  undefined;
+
+function makeSelectPost() {
+  return memoize((response: ApiResponse<Post>) => {
+    return response.data;
+  });
+}
+
+export function getSelectPost() {
+  if (environmentManager.isServer()) {
+    // On server new instance
+    console.log("server");
+    return makeSelectPost();
+  } else {
+    // On browser reutilised instance
+    if (!browserSelectPost) {
+      console.log("client");
+      browserSelectPost = makeSelectPost();
+    }
+    return browserSelectPost;
+  }
+}
 
 export const useGetPostById = <TData = Post>(
   id: number,
@@ -58,7 +79,6 @@ export const useGetPostById = <TData = Post>(
 ) => {
   // select its called only when ApiResponse<Post> change
   // const select = useCallback((response: ApiResponse<Post>) => {
-  //   console.log("Sa rulat select");
   //   return response.data as TData;
   // }, []);
 
@@ -66,7 +86,7 @@ export const useGetPostById = <TData = Post>(
     queryKey: postQueryKeys.byId(id),
     queryFn: ({ signal }) =>
       postsApi.getById(id, { signal, ...optionalAxiosConfig }),
-    select: selectPost as (response: ApiResponse<Post>) => TData,
+    select: getSelectPost() as (response: ApiResponse<Post>) => TData,
     ...queryConfig,
   });
 };

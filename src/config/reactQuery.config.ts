@@ -51,7 +51,7 @@ const queryClientConfig: QueryClientConfig = {
   }),
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000,
+      staleTime: 5 * 1000,
       retry: (failureCount, error) => {
         if (!isAppError(error)) return false;
 

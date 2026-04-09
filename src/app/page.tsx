@@ -8,6 +8,8 @@ import PostWithHydratationBoundary from "@/features/featureA/components/PostWith
 import { ErrorBoundary } from "react-error-boundary";
 
 import PostErrorFallback from "@/features/featureA/components/PostErrorFallback";
+import NuqsComponent from "@/components/NuqsComponent";
+import Test from "@/features/featureA/components/Test";
 
 export const revalidate = 0;
 
@@ -24,6 +26,13 @@ export default function Home() {
             <PostWithHydratationBoundary />
           </Suspense>
         </ErrorBoundary>
+        <ErrorBoundary FallbackComponent={PostErrorFallback}>
+          <Suspense fallback={<p>Loading...</p>}>
+            <PostWithHydratationBoundary />
+          </Suspense>
+        </ErrorBoundary>
+
+        <NuqsComponent />
         <Image
           className="dark:invert"
           src="/next.svg"

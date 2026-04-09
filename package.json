@@ -86,6 +86,7 @@
     "flagsmith-nodejs": "^8.0.2",
     "next": "16.2.2",
     "nuqs": "^2.8.9",
+    "proxy-memoize": "^3.0.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-error-boundary": "^6.1.1",

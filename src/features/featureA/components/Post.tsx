@@ -18,6 +18,7 @@ const Post = withNoSSR(({ id }: { id: number }) => {
 });
 
 export default Post;
+
 // Solve#2:
 /*
 "use client";
