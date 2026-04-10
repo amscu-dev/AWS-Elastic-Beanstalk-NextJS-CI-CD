@@ -47,7 +47,7 @@
     ],
     "*.{md}": [
       "prettier --write",
-      "markdownlint --ignore-path .markdownlintignore --fix"
+      "markdownlint --config .github/linters/.markdownlint.yaml --ignore-path .markdownlintignore --fix"
     ],
     "*.{yaml,yml}": [
       "prettier --write"
