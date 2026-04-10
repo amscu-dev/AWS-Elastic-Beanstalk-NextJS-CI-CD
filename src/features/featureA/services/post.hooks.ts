@@ -12,7 +12,7 @@ import { postQueryKeys } from "./post.queryKeys";
 import { postsApi } from "./post.api";
 import { OptionalConfig } from "@/types/axios.types";
 import { AppError } from "@/types/errors.types";
-import { useCallback, useRef } from "react";
+import { useRef } from "react";
 import { environmentManager } from "@tanstack/react-query";
 // useMutation<TData, TError, TVariables, TContext>
 // TData      — what mutationFn returns (server response)

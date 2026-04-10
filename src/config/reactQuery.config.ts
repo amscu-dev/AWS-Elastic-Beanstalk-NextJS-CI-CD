@@ -4,7 +4,7 @@ import {
   QueryCache,
   QueryClientConfig,
 } from "@tanstack/react-query";
-import superjson from "superjson";
+
 // Jitter Strategy
 // Docs: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
 const decorrelatedRetryDelay = (attemptIndex: number) => {
