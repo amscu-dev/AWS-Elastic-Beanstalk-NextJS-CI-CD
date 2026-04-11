@@ -3,6 +3,7 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import boundaries from "eslint-plugin-boundaries";
+import eslintPluginJsonc from "eslint-plugin-jsonc";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -125,6 +126,38 @@ const eslintConfig = defineConfig([
           ],
         },
       ],
+    },
+  },
+  {
+    files: ["**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": "off",
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "react-redux",
+              importNames: ["useSelector", "useDispatch"],
+              message:
+                "Use typed hooks `useAppDispatch` and `useAppSelector` instead.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/store/hooks.ts"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": "off",
+    },
+  },
+  ...eslintPluginJsonc.configs["recommended-with-json"],
+  {
+    files: [".vscode/**/*.json", ".devcontainer/**/*.json"],
+    rules: {
+      "jsonc/no-comments": "off",
     },
   },
 ]);

@@ -7,5 +7,6 @@
   },
   "workbench.editorAssociations": {
     "git-rebase-todo": "default"
-  }
+  },
+  "eslint.validate": ["javascript", "javascriptreact", "json", "jsonc", "json5"]
 }

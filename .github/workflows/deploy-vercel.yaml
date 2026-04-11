@@ -30,7 +30,7 @@ jobs:
       - run-tests
     runs-on: ubuntu-24.04
     outputs:
-      aws-url: "${{ steps.deploy-vercel.outputs.preview-url }}"
+      vercel-url: "${{ steps.deploy-vercel.outputs.preview-url }}"
     environment:
       name: ${{ inputs.github-env }}
       url: "${{ steps.deploy-vercel.outputs.preview-url }}"
@@ -77,7 +77,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-project-name: ${{secrets.VERCEL_PROJECT_NAME}}
+          vercel-project-name: ${{vars.VERCEL_PROJECT_NAME}}
           prebuilt: true
           github-deployment: true
           github-deployment-environment: ${{ inputs.github-env }}
