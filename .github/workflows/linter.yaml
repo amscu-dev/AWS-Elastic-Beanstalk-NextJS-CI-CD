@@ -75,6 +75,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # setting this to false means that only changed files will be scanned in each commit
           VALIDATE_ALL_CODEBASE: ${{ !contains(github.event_name, 'pull_request') }}
+          LINTER_RULES_PATH: .github/linters
           FILTER_REGEX_EXCLUDE: >-
             (^\.next/.*)|
             (^node_modules/.*)|
@@ -105,6 +106,7 @@ jobs:
           VALIDATE_BASH: true
           VALIDATE_GITHUB_ACTIONS: true
           VALIDATE_JSON: true
+          VALIDATE_JSON_PRETTIER: true
           VALIDATE_GITHUB_ACTIONS_ZIZMOR: true
           VALIDATE_GITLEAKS: true
           VALIDATE_GIT_MERGE_CONFLICT_MARKERS: true
@@ -112,3 +114,12 @@ jobs:
           VALIDATE_MARKDOWN_PRETTIER: true
           VALIDATE_YAML: true
           VALIDATE_YAML_PRETTIER: true
+          JAVASCRIPT_ES_CONFIG_FILE: eslint.config.mjs
+          TYPESCRIPT_ES_CONFIG_FILE: eslint.config.mjs
+          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_JAVASCRIPT_PRETTIER: true
+          VALIDATE_JSX: true
+          VALIDATE_JSX_PRETTIER: true
+          VALIDATE_TSX: true
+          VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_TYPESCRIPT_PRETTIER: true
