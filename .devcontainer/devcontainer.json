@@ -12,7 +12,8 @@
     "ghcr.io/devcontainers-extra/features/aws-eb-cli:1": {},
     "ghcr.io/devcontainers-extra/features/npm-package:1": {},
     "ghcr.io/devcontainers-extra/features/vercel-cli:1": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers-extra/features/snyk-cli:1": {}
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -57,7 +58,8 @@
         "Gruntfuggly.todo-tree",
         "pflannery.vscode-versionlens",
         "pmneo.tsimporter",
-        "redhat.vscode-yaml"
+        "redhat.vscode-yaml",
+        "snyk-security.snyk-vulnerability-scanner"
       ]
     }
   }

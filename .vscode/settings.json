@@ -8,5 +8,13 @@
   "workbench.editorAssociations": {
     "git-rebase-todo": "default"
   },
-  "eslint.validate": ["javascript", "javascriptreact", "json", "jsonc", "json5"]
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "json",
+    "jsonc",
+    "json5"
+  ],
+  "snyk.advanced.organization": "ab4275eb-eb6f-4065-88e5-501e8b278106",
+  "snyk.advanced.autoSelectOrganization": true
 }
