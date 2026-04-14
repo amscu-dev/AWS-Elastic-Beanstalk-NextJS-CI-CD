@@ -4,9 +4,6 @@ run-name: "Dependency Review on ${{ github.ref_name }} by @${{ github.actor }}"
 
 on:
   workflow_call:
-  push:
-    branches:
-      - main
 
 jobs:
   dependency-review:
