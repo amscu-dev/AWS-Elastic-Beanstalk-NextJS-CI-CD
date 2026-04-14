@@ -9,25 +9,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  secret-scan-gitleaks:
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout Repository Code
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_ENABLE_COMMENTS: true
-          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: true
-          GITLEAKS_ENABLE_SUMMARY: true
-
   dependency-review:
     uses: ./.github/workflows/dependency-review.yaml
     permissions:
@@ -44,8 +25,17 @@ jobs:
     permissions:
       pull-requests: write
   scan-gitguardian:
+    needs:
+      - run-tests
     uses: ./.github/workflows/gitguardian.yaml
     permissions:
       contents: read
     secrets:
       GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
+
+  secret-scan-gitleaks:
+    needs:
+      - run-tests
+    uses: ./.github/workflows/gitleaks.yaml
+    permissions:
+      contents: read
