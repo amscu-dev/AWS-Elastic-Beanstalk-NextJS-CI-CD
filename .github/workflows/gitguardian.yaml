@@ -14,7 +14,9 @@ jobs:
   secret-scan-gitguardian:
     name: GitGuardian scan
     runs-on: ubuntu-latest
-    environment: gitguardian
+    environment:
+      name: gitguardian
+      deployment: false
     permissions:
       contents: read
     steps:

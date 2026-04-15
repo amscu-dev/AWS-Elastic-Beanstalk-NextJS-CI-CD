@@ -1,0 +1,104 @@
+name: Snyk Scan
+
+run-name: >-
+  ${{ github.event_name == 'pull_request'
+  && format('Snyk Scan - PR#{0} by @{1}', github.event.pull_request.number, github.actor)
+  || format('Snyk Scan - Push to {0} by @{1}', github.ref_name, github.actor) }}
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-security-scans:
+    runs-on: ubuntu-24.04
+    environment:
+      name: snyk
+      deployment: false
+    permissions:
+      pull-requests: write
+      security-events: write
+      actions: read
+    steps:
+      - name: Checkout Repository Code
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Node Environment
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Install Snyk
+        run: npm install snyk -g
+
+      - name: Install snyk-to-html
+        run: npm install snyk-to-html -g
+
+      - name: Authenticate Snyk
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk auth "$SNYK_TOKEN"
+
+      #  Dependecies scaninng
+      # snyk test docs: https://docs.snyk.io/developer-tools/snyk-cli/commands/test#org-less-than-org_id-greater-than
+      - name: Snyk Open Source Scanning
+        run: |
+          snyk test --org=${{ secrets.SNYK_ORG }} \
+          --severity-threshold=medium \
+          --dev \
+          --all-projects \
+          --sarif-file-output=snyk-results-opensource.sarif \
+          --json-file-output=snyk-results-opensource.json
+
+      - name: Snyk Code Scanning
+        run: |
+          snyk code test --org=${{ secrets.SNYK_ORG }} \
+          --severity-threshold=medium \
+          --sarif-file-output=snyk-results-code.sarif \
+          --json-file-output=snyk-results-code.json
+
+      - name: Parse json to html snyk
+        if: always()
+        run: |
+          snyk-to-html -i snyk-results-opensource.json -o results-opensource.html
+          snyk-to-html -i snyk-results-code.json -o results-code.html
+
+      # ─── SARIF Upload → GitHub Security Tab
+      - name: Upload Open Source SARIF to GitHub Security Tab
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        with:
+          sarif_file: snyk-results-opensource.sarif
+          category: snyk-opensource
+
+      - name: Upload Code SARIF to GitHub Security Tab
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        with:
+          sarif_file: snyk-results-code.sarif
+          category: snyk-code
+
+      # ─── HTML Upload
+      - name: Upload HTML Reports as Artifact
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: snyk-html-reports-${{ github.run_number }}
+          path: |
+            snyk-results-opensource.html
+            snyk-results-code.html
+          retention-days: 30
