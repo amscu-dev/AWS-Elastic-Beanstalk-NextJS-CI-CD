@@ -19,6 +19,8 @@ const DEVELOPMENT_DOMAINS = [
   SENTRY_DOMAINS,
 ].join(" ");
 
+const VERCEL_SCRIPT_DOMAINS = "https://vercel.live https://*.vercel.live";
+
 const isVercel = process.env.VERCEL === "1";
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -29,7 +31,7 @@ const cspHeader = `
       ? DEVELOPMENT_DOMAINS
       : PRODUCTION_DOMAINS
   };
-  script-src 'self' 'unsafe-eval' 'unsafe-inline';
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' ${isVercel ? VERCEL_SCRIPT_DOMAINS : ""};
   style-src 'self' 'unsafe-inline';
   img-src 'self' blob: data:;
   font-src 'self';
