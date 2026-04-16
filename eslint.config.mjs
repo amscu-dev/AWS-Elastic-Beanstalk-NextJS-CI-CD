@@ -9,6 +9,7 @@ import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import boundaries from "eslint-plugin-boundaries";
 import security from "eslint-plugin-security";
+import sonarjs from "eslint-plugin-sonarjs";
 // import importPlugin from "eslint-plugin-import";
 
 const eslintConfig = defineConfig([
@@ -215,6 +216,14 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "unicorn/no-null": "off",
+    },
+  },
+  sonarjs.configs.recommended,
+  {
+    rules: {
+      "sonarjs/no-nested-conditional": "off",
+      "sonarjs/no-commented-code": "off",
+      "sonarjs/todo-tag": "off",
     },
   },
 ]);

@@ -10,6 +10,7 @@ import { isAppError } from "@/utils/handle-api-error";
 // Docs: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
 const decorrelatedRetryDelay = (attemptIndex: number) => {
   const base = Math.min(1000 * 2 ** attemptIndex, 30_000);
+  // eslint-disable-next-line sonarjs/pseudo-random -- no need for check
   return Math.random() * base;
 };
 
