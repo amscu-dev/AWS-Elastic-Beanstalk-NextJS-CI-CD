@@ -2,15 +2,18 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import modalStateReducer from "@/store/slices/modal-state-slice";
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
     modal: modalStateReducer,
   },
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<AppStore["getState"]>;
+type RootState = ReturnType<AppStore["getState"]>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type AppDispatch = AppStore["dispatch"];
+type AppDispatch = AppStore["dispatch"];
 // Get the type of our store variable
-export type AppStore = typeof store;
+type AppStore = typeof store;
+
+export type { AppDispatch, RootState, AppStore };
+export { store };

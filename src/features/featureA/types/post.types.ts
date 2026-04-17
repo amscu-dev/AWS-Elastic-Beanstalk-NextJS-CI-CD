@@ -6,7 +6,9 @@ import {
   postSchema,
 } from "../schemas/post.schema";
 
-export type CreatePostDto = z.infer<typeof createPostSchema>;
-export type UpdatePostDto = z.infer<typeof updatePostSchema>;
+type CreatePostDto = z.infer<typeof createPostSchema>;
+type UpdatePostDto = z.infer<typeof updatePostSchema>;
 // Tipuri derivate din scheme
-export type Post = z.infer<typeof postSchema>;
+type Post = z.infer<typeof postSchema>;
+
+export type { CreatePostDto, UpdatePostDto, Post };

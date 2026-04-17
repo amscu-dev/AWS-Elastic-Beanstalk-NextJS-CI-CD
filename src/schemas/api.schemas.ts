@@ -16,7 +16,7 @@ const rateLimitSchema = z.object({
   limit: z.number(),
 });
 
-export const metaSchema = z.object({
+const metaSchema = z.object({
   pagination: paginationSchema.optional(),
   timestamp: z.iso.datetime().optional(),
   processingTime: z.number().optional(),
@@ -27,8 +27,10 @@ export const metaSchema = z.object({
 });
 
 // Schema factory with generic — receives the data schema as parameter
-export const apiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
+const apiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
     data: dataSchema,
     meta: metaSchema,
   });
+
+export { apiResponseSchema, metaSchema };

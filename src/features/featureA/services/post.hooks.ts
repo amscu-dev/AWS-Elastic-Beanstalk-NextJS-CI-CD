@@ -28,7 +28,7 @@ import { postsApi } from "./post.api";
 // TData        — what the component receives (after select) — default: TQueryFnData
 // TQueryKey    — type of the query key — default: QueryKey
 
-export const useGetAllPosts = <TData = Post[]>(
+const useGetAllPosts = <TData = Post[]>(
   queryConfig: Omit<
     UseSuspenseQueryOptions<ApiResponse<Post[]>, AppError, TData>,
     "queryKey" | "queryFn"
@@ -49,7 +49,7 @@ export const useGetAllPosts = <TData = Post[]>(
 // Singleton on browser (reutilised between re-renders)
 let browserSelectPost: ((response: ApiResponse<Post>) => Post) | undefined;
 
-export function getSelectPost() {
+function getSelectPost() {
   if (environmentManager.isServer()) {
     // On server new instance
     console.log("server");
@@ -70,7 +70,7 @@ function makeSelectPost() {
   });
 }
 
-export const useGetPostById = <TData = Post>(
+const useGetPostById = <TData = Post>(
   id: number,
   queryConfig?: Omit<
     UseSuspenseQueryOptions<ApiResponse<Post>, AppError, TData>,
@@ -92,7 +92,7 @@ export const useGetPostById = <TData = Post>(
   });
 };
 
-export const useCreatePost = (
+const useCreatePost = (
   mutationConfig?: Omit<
     UseMutationOptions<ApiResponse<Post>, AppError, CreatePostDto>,
     "mutationKey" | "mutationFn"
@@ -120,7 +120,7 @@ export const useCreatePost = (
   });
 };
 
-export const usePatchPost = (
+const usePatchPost = (
   mutationConfig?: Omit<
     UseMutationOptions<
       ApiResponse<Post>,
@@ -157,7 +157,7 @@ export const usePatchPost = (
   });
 };
 
-export const useDeletePost = (
+const useDeletePost = (
   mutationConfig?: Omit<
     UseMutationOptions<void, AppError, number>,
     "mutationKey" | "mutationFn"
@@ -184,4 +184,12 @@ export const useDeletePost = (
     mutationKey: postQueryKeys.delete(),
     ...mutationConfig,
   });
+};
+
+export {
+  useGetAllPosts,
+  useGetPostById,
+  useCreatePost,
+  useDeletePost,
+  usePatchPost,
 };

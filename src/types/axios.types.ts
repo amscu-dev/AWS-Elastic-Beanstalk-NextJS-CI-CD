@@ -1,13 +1,15 @@
 import { AxiosRequestConfig } from "axios";
 
-export interface RequiredConfig {
+interface RequiredConfig {
   method: AxiosRequestConfig["method"];
   params?: unknown;
   data?: unknown;
   url: string;
 }
 
-export interface OptionalConfig {
+interface OptionalConfig {
   axiosOptions?: AxiosRequestConfig;
   signal?: AbortSignal;
 }
+
+export type { RequiredConfig, OptionalConfig };

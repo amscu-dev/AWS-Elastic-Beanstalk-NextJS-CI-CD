@@ -4,9 +4,9 @@ import { useMemo } from "react";
 
 import type { AppDispatch, RootState, AppStore } from "@/store/store";
 
-export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
-export const useAppSelector = useSelector.withTypes<RootState>();
-export const useAppStore = useStore.withTypes<AppStore>();
+const useAppDispatch = useDispatch.withTypes<AppDispatch>();
+const useAppSelector = useSelector.withTypes<RootState>();
+const useAppStore = useStore.withTypes<AppStore>();
 
 /**
  * Creates a typed `useProxySelector` hook for a given Redux state shape.
@@ -61,4 +61,6 @@ const createProxySelectorHook = <TState extends object>() => {
   return useProxySelector;
 };
 
-export const useProxySelector = createProxySelectorHook<RootState>();
+const useProxySelector = createProxySelectorHook<RootState>();
+
+export { useProxySelector, useAppDispatch, useAppSelector, useAppStore };

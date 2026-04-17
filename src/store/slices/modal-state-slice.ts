@@ -12,7 +12,7 @@ const initialState: ModalState = {
   isOpen: false,
 };
 
-export const modalStateSlice = createSlice({
+const modalStateSlice = createSlice({
   reducers: {
     onOpenChannelModal: (
       state,
@@ -32,6 +32,7 @@ export const modalStateSlice = createSlice({
   initialState,
 });
 
-export const { onCloseChannelModal, onOpenChannelModal } =
-  modalStateSlice.actions;
+const { onCloseChannelModal, onOpenChannelModal } = modalStateSlice.actions;
+
+export { onCloseChannelModal, onOpenChannelModal, modalStateSlice };
 export default modalStateSlice.reducer;

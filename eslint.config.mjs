@@ -266,8 +266,10 @@ const eslintConfig = defineConfig([
       "import/no-unresolved": "error",
       "import/no-duplicates": "error",
 
-      "import/default": "error",
+      "import/group-exports": "error",
 
+      "import/exports-last": "error",
+      "import/default": "error",
       "import/no-cycle": "warn",
       "import/export": "error",
 
