@@ -18,6 +18,7 @@ import reactPlugin from "eslint-plugin-react";
 import { defineConfig } from "eslint/config";
 import sonarjs from "eslint-plugin-sonarjs";
 import eslintPlugin from "@eslint/js";
+import globals from "globals";
 
 // Global ignores configuration
 // Must be in its own config object to act as global ignores
@@ -31,6 +32,18 @@ const ignoresConfig = defineConfig([
       "next-env.d.ts",
     ],
     name: "project/ignores",
+  },
+]);
+
+const nodeGlobalsConfig = defineConfig([
+  {
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+    files: ["**/*.{js,mjs,cjs}", "eslint.config.mjs"],
+    name: "project/node-globals",
   },
 ]);
 
@@ -463,23 +476,6 @@ const sonarjsConfig = defineConfig([
 const importConfig = defineConfig([
   {
     rules: {
-      // Helpful warnings
-      "import/no-extraneous-dependencies": [
-        "error",
-        {
-          devDependencies: [
-            "**/__tests__/**",
-            "**/*.test.*",
-            "**/*.spec.*",
-            "eslint.config.*",
-            "next.config.*",
-            "jest.config.*",
-            "jest.setup.ts",
-            "mocks/**/*",
-            "playwright.config.ts",
-          ],
-        },
-      ],
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
       "import/no-useless-path-segments": ["error", { noUselessIndex: true }],
       "import/no-named-as-default-member": "warn",
@@ -607,6 +603,7 @@ const tailwindcssConfig = defineConfig({
 
 const eslintConfig = defineConfig([
   ...ignoresConfig,
+  ...nodeGlobalsConfig,
   ...eslintJSConfig,
   ...typescriptConfig,
   ...reactConfig,
