@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 // Schema de baza
 export const postSchema = z.object({

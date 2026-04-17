@@ -1,11 +1,11 @@
 import {
   UseSuspenseQueryOptions,
   UseMutationOptions,
+  environmentManager,
   useSuspenseQuery,
   useQueryClient,
   useMutation,
 } from "@tanstack/react-query";
-import { environmentManager } from "@tanstack/react-query";
 import memoize from "fast-memoize";
 import { useRef } from "react";
 

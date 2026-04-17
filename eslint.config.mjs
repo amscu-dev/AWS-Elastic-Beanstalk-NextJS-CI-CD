@@ -1,20 +1,21 @@
+import { configs as perfectionistConfigs } from "eslint-plugin-perfectionist";
+import { configs as jsoncConfigs } from "eslint-plugin-jsonc";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import { globalIgnores, defineConfig } from "eslint/config";
 import eslintComments from "eslint-plugin-eslint-comments";
 import testingLibrary from "eslint-plugin-testing-library";
-import perfectionist from "eslint-plugin-perfectionist";
 import eslintPluginUnicorn from "eslint-plugin-unicorn";
-import eslintPluginJsonc from "eslint-plugin-jsonc";
 import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import boundaries from "eslint-plugin-boundaries";
+import importPlugin from "eslint-plugin-import";
 import security from "eslint-plugin-security";
 import sonarjs from "eslint-plugin-sonarjs";
-// import importPlugin from "eslint-plugin-import";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  // Docs: https://www.npmjs.com/package/eslint-config-prettier
   prettier,
   // Override default ignores of eslint-config-next.
   globalIgnores([
@@ -24,6 +25,7 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  // Docs: https://www.jsboundaries.dev/
   {
     rules: {
       "boundaries/dependencies": [
@@ -164,15 +166,16 @@ const eslintConfig = defineConfig([
     },
     files: ["src/store/hooks.ts"],
   },
-  ...eslintPluginJsonc.configs["recommended-with-json"],
+  // Docs: https://ota-meshi.github.io/eslint-plugin-jsonc/
+  ...jsoncConfigs["recommended-with-json"],
   {
     files: [".vscode/**/*.json", ".devcontainer/**/*.json"],
     rules: {
       "jsonc/no-comments": "off",
     },
   },
+  // Docs: https://mysticatea.github.io/eslint-plugin-eslint-comments/rules/
   {
-    // Docs: https://mysticatea.github.io/eslint-plugin-eslint-comments/rules/
     rules: {
       "eslint-comments/require-description": [
         "error",
@@ -198,11 +201,14 @@ const eslintConfig = defineConfig([
       "eslint-comments": eslintComments,
     },
   },
+  // Docs: https://www.npmjs.com/package/eslint-plugin-testing-library
   {
     files: ["**/__tests__/**/*.{jsx,tsx}"],
     ...testingLibrary.configs["flat/react"],
   },
-  perfectionist.configs["recommended-line-length"],
+  // Docs: https://perfectionist.dev/
+  perfectionistConfigs["recommended-line-length"],
+  // Docs: https://www.npmjs.com/package/eslint-plugin-security
   {
     rules: {
       ...security.configs.recommended.rules,
@@ -212,18 +218,64 @@ const eslintConfig = defineConfig([
     },
     files: ["**/*.{js,jsx,ts,tsx}"],
   },
+  // Docs: https://www.npmjs.com/package/eslint-plugin-unicorn
   eslintPluginUnicorn.configs.recommended,
   {
     rules: {
       "unicorn/no-null": "off",
     },
   },
+  // Docs: https://www.npmjs.com/package/eslint-plugin-sonarjs?activeTab=versions
   sonarjs.configs.recommended,
   {
     rules: {
       "sonarjs/no-nested-conditional": "off",
       "sonarjs/no-commented-code": "off",
       "sonarjs/todo-tag": "off",
+    },
+  },
+  // Docs: https://www.npmjs.com/package/eslint-plugin-import?activeTab=readme
+  {
+    rules: {
+      // Helpful warnings
+      "import/no-extraneous-dependencies": [
+        "error",
+        {
+          devDependencies: [
+            "**/__tests__/**",
+            "**/*.test.*",
+            "**/*.spec.*",
+            "eslint.config.*",
+            "next.config.*",
+            "jest.config.*",
+            "jest.setup.ts",
+            "mocks/**/*",
+            "playwright.config.ts",
+          ],
+        },
+      ],
+      "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+      "import/no-useless-path-segments": ["error", { noUselessIndex: true }],
+      "import/no-named-as-default-member": "warn",
+      "import/newline-after-import": "error",
+      "import/no-mutable-exports": "error",
+      "import/no-named-as-default": "warn",
+      "import/no-absolute-path": "error",
+      "import/no-self-import": "error",
+
+      "import/no-unresolved": "error",
+      "import/no-duplicates": "error",
+
+      "import/default": "error",
+
+      "import/no-cycle": "warn",
+      "import/export": "error",
+
+      // Style guide
+      "import/first": "error",
+    },
+    plugins: {
+      import: importPlugin,
     },
   },
 ]);

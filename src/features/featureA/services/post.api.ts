@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 import { customAxiosInstance } from "@/config/axios.config";
 import { apiResponseSchema } from "@/schemas/api.schemas";

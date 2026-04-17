@@ -164,4 +164,5 @@ if (process.env.NEXT_PUBLIC_SENTRY_DISABLED !== "true") {
   });
 }
 
-export default nextConfig;
+const finalConfig = nextConfig;
+export default finalConfig;

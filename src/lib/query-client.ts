@@ -1,5 +1,4 @@
-import { environmentManager } from "@tanstack/react-query";
-import { QueryClient } from "@tanstack/react-query";
+import { environmentManager, QueryClient } from "@tanstack/react-query";
 
 import queryClientConfig from "@/config/react-query.config";
 

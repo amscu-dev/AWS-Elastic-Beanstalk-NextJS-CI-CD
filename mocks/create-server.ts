@@ -1,4 +1,6 @@
-import { HttpResponse, JsonBodyType, HttpMethods, PathParams, http } from "msw";
+import type { JsonBodyType, PathParams } from "msw";
+
+import { HttpResponse, HttpMethods, http } from "msw";
 import { setupServer } from "msw/node";
 
 interface HandlerConfig {

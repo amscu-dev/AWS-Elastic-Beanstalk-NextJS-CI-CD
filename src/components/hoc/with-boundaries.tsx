@@ -1,5 +1,7 @@
-import { type FallbackProps, ErrorBoundary } from "react-error-boundary";
+import type { FallbackProps } from "react-error-boundary";
+
 import { ComponentType, ReactNode, Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
 type withSuspenseOptions = {
   errorComponent: ComponentType<FallbackProps>;
