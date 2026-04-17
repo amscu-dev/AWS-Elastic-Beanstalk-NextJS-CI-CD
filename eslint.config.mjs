@@ -1,19 +1,24 @@
 import { configs as perfectionist } from "eslint-plugin-perfectionist";
 import tailwindcssPlugin from "eslint-plugin-better-tailwindcss";
 import reactCompilerPlugin from "eslint-plugin-react-compiler";
-import nextVitals from "eslint-config-next/core-web-vitals";
+import { configs as tseslintConfigs } from "typescript-eslint";
 import eslintComments from "eslint-plugin-eslint-comments";
 import testingLibrary from "eslint-plugin-testing-library";
+import reactHooksPlugin from "eslint-plugin-react-hooks";
 import eslintPluginUnicorn from "eslint-plugin-unicorn";
-import { configs as jsonc } from "eslint-plugin-jsonc";
-import nextTs from "eslint-config-next/typescript";
+import eslintPluginJsonc from "eslint-plugin-jsonc";
 import prettier from "eslint-config-prettier/flat";
+import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
 import boundaries from "eslint-plugin-boundaries";
+import nextPlugin from "@next/eslint-plugin-next";
 import importPlugin from "eslint-plugin-import";
 import * as mdxPlugin from "eslint-plugin-mdx";
 import security from "eslint-plugin-security";
+import reactPlugin from "eslint-plugin-react";
 import { defineConfig } from "eslint/config";
 import sonarjs from "eslint-plugin-sonarjs";
+import eslintPlugin from "@eslint/js";
+
 // Global ignores configuration
 // Must be in its own config object to act as global ignores
 const ignoresConfig = defineConfig([
@@ -29,10 +34,129 @@ const ignoresConfig = defineConfig([
   },
 ]);
 
-const baseConfig = defineConfig([...nextVitals, ...nextTs]);
+// ESLint recommended rules for JavaScript/TypeScript
+// Docs: https://www.npmjs.com/package/@eslint/js
+const eslintJSConfig = defineConfig([
+  {
+    name: "project/eslint-js/javascript-recommended",
+    files: ["**/*.{js,mjs,ts,tsx}"],
+    ...eslintPlugin.configs.recommended,
+  },
+]);
 
+// TypeScript configuration with type-checked rules
+// Docs: https://typescript-eslint.io/
+const typescriptConfig = defineConfig([
+  {
+    rules: {
+      // Allow ts-expect-error and ts-ignore with descriptions
+      "@typescript-eslint/ban-ts-comment": [
+        "error",
+        {
+          "ts-expect-error": "allow-with-description",
+          "ts-ignore": "allow-with-description",
+          minimumDescriptionLength: 3,
+          "ts-nocheck": false,
+          "ts-check": false,
+        },
+      ],
+      "@typescript-eslint/triple-slash-reference": "off",
+      // disabled next rule due to bug:
+      // https://github.com/typescript-eslint/typescript-eslint/issues/11732
+      // https://github.com/eslint/eslint/issues/20272
+      "@typescript-eslint/unified-signatures": "off",
+      // Disable rules that conflict with TypeScript's own error checking
+      "@typescript-eslint/no-unsafe-call": "off",
+    },
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+        warnOnUnsupportedTypeScriptVersion: true,
+        tsconfigRootDir: import.meta.dirname,
+        // Automatically detects tsconfig.json
+        projectService: true,
+      },
+    },
+    extends: [
+      ...tseslintConfigs.strictTypeChecked,
+      ...tseslintConfigs.stylisticTypeChecked,
+    ],
+    name: "project/typescript-strict",
+    files: ["**/*.{ts,tsx,mjs}"],
+  },
+  {
+    rules: {
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+    },
+    files: ["**/*.{test,spec}.{ts,tsx}", "**/__tests__/**/*.{ts,tsx}"],
+    name: "project/disable-typescript-eslint-test",
+  },
+  {
+    name: "project/javascript-disable-type-check",
+    files: ["**/*.{js,mjs,cjs}"],
+    ...tseslintConfigs.disableTypeChecked,
+  },
+]);
+
+// React and Next.js configuration
+const reactConfig = defineConfig([
+  {
+    rules: {
+      // React recommended rules
+      ...reactPlugin.configs.recommended.rules,
+      ...reactPlugin.configs["jsx-runtime"].rules,
+      // React Hooks rules (use recommended-latest for latest features)
+      ...reactHooksPlugin.configs["recommended-latest"].rules,
+      // Accessibility rules (strict mode for better a11y)
+      ...jsxA11yPlugin.configs.strict.rules,
+      // Next.js recommended rules
+      ...nextPlugin.configs.recommended.rules,
+      // Next.js Core Web Vitals rules
+      ...nextPlugin.configs["core-web-vitals"].rules,
+
+      // Fine-tuned accessibility rules
+      "jsx-a11y/alt-text": [
+        "warn",
+        {
+          elements: ["img"],
+          img: ["Image"], // Next.js Image component
+        },
+      ],
+      "jsx-a11y/role-has-required-aria-props": "warn",
+      "jsx-a11y/aria-unsupported-elements": "warn",
+      "jsx-a11y/role-supports-aria-props": "warn",
+
+      "jsx-a11y/media-has-caption": "warn",
+      "react/no-unknown-property": "off", // Conflicts with custom attributes
+      "react/jsx-no-target-blank": "off", // Next.js handles this
+      // Customizations for modern React/Next.js
+      "react/react-in-jsx-scope": "off", // Not needed in Next.js
+      "jsx-a11y/aria-proptypes": "warn",
+      "jsx-a11y/aria-props": "warn",
+      "react/prop-types": "off", // Use TypeScript instead
+    },
+    plugins: {
+      "react-hooks": reactHooksPlugin,
+      "jsx-a11y": jsxA11yPlugin,
+      "@next/next": nextPlugin,
+      react: reactPlugin,
+    },
+    settings: {
+      react: {
+        version: "detect", // Automatically detect React version
+      },
+    },
+    name: "project/react-next",
+    files: ["**/*.{jsx,tsx}"],
+  },
+]);
+
+// Docs: https://www.jsboundaries.dev/
 const jsBoundariesConfig = defineConfig([
-  // Docs: https://www.jsboundaries.dev/
   {
     rules: {
       "boundaries/dependencies": [
@@ -146,6 +270,7 @@ const jsBoundariesConfig = defineConfig([
       ],
       "boundaries/include": ["src/**/*"],
     },
+    name: "project/module-boundaries",
     plugins: { boundaries },
   },
 ]);
@@ -168,6 +293,7 @@ const reduxHooksLintConfig = defineConfig([
       ],
       "no-restricted-imports": "off",
     },
+    name: "project/redux-hooks",
     files: ["**/*.{ts,tsx}"],
   },
   {
@@ -175,17 +301,68 @@ const reduxHooksLintConfig = defineConfig([
       "@typescript-eslint/no-restricted-imports": "off",
     },
     files: ["src/store/hooks.ts"],
+    name: "project/redux-hooks",
   },
 ]);
 
 // Docs: https://ota-meshi.github.io/eslint-plugin-jsonc
 const jsonConfig = defineConfig([
-  ...jsonc["recommended-with-json"],
+  {
+    rules: {
+      "jsonc/vue-custom-block/no-parsing-error": "error",
+      "jsonc/no-escape-sequence-in-identifier": "error",
+      "jsonc/no-hexadecimal-numeric-literals": "error",
+      "jsonc/no-unicode-codepoint-escapes": "error",
+      "jsonc/no-binary-numeric-literals": "error",
+      "jsonc/no-octal-numeric-literals": "error",
+      "jsonc/no-irregular-whitespace": "error",
+      "jsonc/no-numeric-separators": "error",
+      "jsonc/no-binary-expression": "error",
+      "jsonc/no-template-literals": "error",
+      "jsonc/no-floating-decimal": "error",
+      "jsonc/no-bigint-literals": "error",
+      "jsonc/no-regexp-literals": "error",
+      "jsonc/no-undefined-value": "error",
+      "jsonc/no-useless-escape": "error",
+      "jsonc/valid-json-number": "error",
+      "jsonc/no-parenthesized": "error",
+      "jsonc/no-sparse-arrays": "error",
+      "jsonc/no-number-props": "error",
+      "jsonc/space-unary-ops": "error",
+      "no-unused-expressions": "off",
+      "jsonc/comma-dangle": "error",
+      "jsonc/no-dupe-keys": "error",
+      "jsonc/no-multi-str": "error",
+      "jsonc/no-plus-sign": "error",
+      "jsonc/no-comments": "error",
+      "jsonc/no-infinity": "error",
+      "jsonc/quote-props": "error",
+      "jsonc/no-octal": "error",
+      "no-unused-vars": "off",
+      "jsonc/no-nan": "error",
+      "jsonc/quotes": "error",
+      strict: "off",
+    },
+    files: [
+      "*.json",
+      "**/*.json",
+      "*.json5",
+      "**/*.json5",
+      "*.jsonc",
+      "**/*.jsonc",
+    ],
+    plugins: {
+      jsonc: eslintPluginJsonc,
+    },
+    name: "project/eslint-eslint-plugin-jsonc",
+    language: "jsonc/x",
+  },
   {
     files: [".vscode/**/*.json", ".devcontainer/**/*.json"],
     rules: {
       "jsonc/no-comments": "off",
     },
+    name: "project/eslint-eslint-plugin-jsonc",
   },
 ]);
 
@@ -216,6 +393,7 @@ const eslintCommentsConfig = defineConfig([
     plugins: {
       "eslint-comments": eslintComments,
     },
+    name: "project/eslint-plugin-eslint-comments",
   },
 ]);
 
@@ -229,7 +407,10 @@ const testConfigs = defineConfig([
 
 // Docs: https://perfectionist.dev/
 const perfectionistConfigs = defineConfig([
-  perfectionist["recommended-line-length"],
+  {
+    ...perfectionist["recommended-line-length"],
+    name: "perfectionist/recommended-line-length",
+  },
 ]);
 
 // Docs: https://www.npmjs.com/package/eslint-plugin-security
@@ -241,6 +422,7 @@ const securityConfig = defineConfig([
     plugins: {
       security,
     },
+    name: "project/eslint-security",
     files: ["**/*.{js,jsx,ts,tsx}"],
   },
 ]);
@@ -252,11 +434,13 @@ const unicornConfig = defineConfig([
     rules: {
       "unicorn/no-null": "off",
     },
+    name: "project/unicorn/disable",
   },
   {
     rules: {
       "unicorn/filename-case": "off",
     },
+    name: "project/unicorn/disable",
     files: ["**/*.md"],
   },
 ]);
@@ -266,10 +450,12 @@ const sonarjsConfig = defineConfig([
   sonarjs.configs.recommended,
   {
     rules: {
+      "sonarjs/prefer-read-only-props": "off",
       "sonarjs/no-nested-conditional": "off",
       "sonarjs/no-commented-code": "off",
       "sonarjs/todo-tag": "off",
     },
+    name: "project/sonarjs/disable",
   },
 ]);
 
@@ -316,9 +502,18 @@ const importConfig = defineConfig([
       // Style guide
       "import/first": "error",
     },
+    settings: {
+      "import/resolver": {
+        // You will also need to install and configure the TypeScript resolver
+        // See also https://github.com/import-js/eslint-import-resolver-typescript#configuration
+        typescript: true,
+        node: true,
+      },
+    },
     plugins: {
       import: importPlugin,
     },
+    name: "project/eslint-import-plugin",
   },
 ]);
 
@@ -412,7 +607,9 @@ const tailwindcssConfig = defineConfig({
 
 const eslintConfig = defineConfig([
   ...ignoresConfig,
-  ...baseConfig,
+  ...eslintJSConfig,
+  ...typescriptConfig,
+  ...reactConfig,
   ...prettierConfig,
   ...jsBoundariesConfig,
   ...reduxHooksLintConfig,
@@ -428,4 +625,5 @@ const eslintConfig = defineConfig([
   ...reactCompilerConfig,
   ...tailwindcssConfig,
 ]);
+
 export default eslintConfig;

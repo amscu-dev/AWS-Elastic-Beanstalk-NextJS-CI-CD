@@ -3,14 +3,14 @@ import type { FallbackProps } from "react-error-boundary";
 import { ComponentType, ReactNode, Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-type withSuspenseOptions = {
+interface WithSuspenseOptions {
   errorComponent: ComponentType<FallbackProps>;
   loadingComponent?: ReactNode;
-};
+}
 
 export const withSuspense = <P extends object>(
   WrappedComponent: ComponentType<P>,
-  options: withSuspenseOptions,
+  options: WithSuspenseOptions,
 ) => {
   const { errorComponent: ErrorFallbackComponent, loadingComponent = null } =
     options;
@@ -26,7 +26,7 @@ export const withSuspense = <P extends object>(
   };
 
   WithSuspenseComponent.displayName = `withSuspense(${
-    WrappedComponent.displayName || WrappedComponent.name || "Component"
+    (WrappedComponent.displayName ?? WrappedComponent.name) || "Component"
   })`;
 
   return WithSuspenseComponent;

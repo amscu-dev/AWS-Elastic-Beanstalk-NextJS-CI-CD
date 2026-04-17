@@ -21,8 +21,22 @@ export default function Page() {
       const result = await Sentry.diagnoseSdkConnectivity();
       setIsConnected(result !== "sentry-unreachable");
     }
-    checkConnectivity();
+    void checkConnectivity();
   }, []);
+
+  const handleClick = async () => {
+    Sentry.logger.info("User clicked the button, throwing a sample error");
+    await Sentry.startSpan(
+      { name: "Example Frontend/Backend Span", op: "test" },
+      async () => {
+        const response = await fetch("/api/sentry-example-api");
+        if (!response.ok) setHasSentError(true);
+      },
+    );
+    throw new SentryExampleFrontendError(
+      "This error is raised on the frontend of the example page.",
+    );
+  };
 
   return (
     <div>
@@ -68,26 +82,7 @@ export default function Page() {
           .
         </p>
         <button
-          onClick={async () => {
-            Sentry.logger.info(
-              "User clicked the button, throwing a sample error",
-            );
-            await Sentry.startSpan(
-              {
-                name: "Example Frontend/Backend Span",
-                op: "test",
-              },
-              async () => {
-                const response = await fetch("/api/sentry-example-api");
-                if (!response.ok) {
-                  setHasSentError(true);
-                }
-              },
-            );
-            throw new SentryExampleFrontendError(
-              "This error is raised on the frontend of the example page.",
-            );
-          }}
+          onClick={() => void handleClick()}
           disabled={!isConnected}
           type="button"
         >

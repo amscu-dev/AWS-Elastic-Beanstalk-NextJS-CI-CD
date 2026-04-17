@@ -112,8 +112,8 @@ const useCreatePost = (
         signal: controllerReference.current.signal,
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: postQueryKeys.all() });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: postQueryKeys.all() });
     },
     mutationKey: postQueryKeys.create(),
     ...mutationConfig,
@@ -148,9 +148,9 @@ const usePatchPost = (
         signal: controllerReference.current.signal,
       });
     },
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: postQueryKeys.byId(id) });
-      queryClient.invalidateQueries({ queryKey: postQueryKeys.all() });
+    onSuccess: async (_, { id }) => {
+      await queryClient.invalidateQueries({ queryKey: postQueryKeys.byId(id) });
+      await queryClient.invalidateQueries({ queryKey: postQueryKeys.all() });
     },
     mutationKey: postQueryKeys.patch(),
     ...mutationConfig,
@@ -159,7 +159,7 @@ const usePatchPost = (
 
 const useDeletePost = (
   mutationConfig?: Omit<
-    UseMutationOptions<void, AppError, number>,
+    UseMutationOptions<undefined, AppError, number>,
     "mutationKey" | "mutationFn"
   >,
   optionalAxiosConfig?: Omit<OptionalConfig, "signal">,
@@ -167,7 +167,7 @@ const useDeletePost = (
   const queryClient = useQueryClient();
   const controllerReference = useRef<AbortController | null>(null);
 
-  return useMutation<void, AppError, number>({
+  return useMutation<undefined, AppError, number>({
     mutationFn: (id) => {
       controllerReference.current?.abort();
       controllerReference.current = new AbortController();
@@ -177,9 +177,9 @@ const useDeletePost = (
         signal: controllerReference.current.signal,
       });
     },
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: postQueryKeys.byId(id) });
-      queryClient.invalidateQueries({ queryKey: postQueryKeys.all() });
+    onSuccess: async (_, id) => {
+      await queryClient.invalidateQueries({ queryKey: postQueryKeys.byId(id) });
+      await queryClient.invalidateQueries({ queryKey: postQueryKeys.all() });
     },
     mutationKey: postQueryKeys.delete(),
     ...mutationConfig,

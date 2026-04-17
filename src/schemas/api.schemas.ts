@@ -27,7 +27,7 @@ const metaSchema = z.object({
 });
 
 // Schema factory with generic — receives the data schema as parameter
-const apiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
+const apiResponseSchema = <T extends z.ZodType>(dataSchema: T) =>
   z.object({
     data: dataSchema,
     meta: metaSchema,

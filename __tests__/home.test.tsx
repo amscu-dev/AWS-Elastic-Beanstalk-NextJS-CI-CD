@@ -19,8 +19,6 @@ const setup = () => {
 };
 
 describe("Home Page", () => {
-  beforeEach(() => {});
-
   test("1. renders the Next.js logo with correct alt text", () => {
     setup();
     const logo = screen.getByAltText("Next.js logo");

@@ -75,7 +75,9 @@ describe("post hooks", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
 
     expect(mockedPostsApi.getAll).toHaveBeenCalledTimes(1);
     expect(result.current.data).toEqual([
@@ -103,13 +105,15 @@ describe("post hooks", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
 
     expect(mockedPostsApi.getById).toHaveBeenCalledTimes(1);
     expect(mockedPostsApi.getById).toHaveBeenCalledWith(
       1,
       expect.objectContaining({
-        signal: expect.any(AbortSignal),
+        signal: expect.any(AbortSignal) as unknown,
       }),
     );
     expect(result.current.data).toEqual({
@@ -147,7 +151,9 @@ describe("post hooks", () => {
       });
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
 
     expect(mockedPostsApi.create).toHaveBeenCalledTimes(1);
     expect(mockedPostsApi.create).toHaveBeenCalledWith(
@@ -157,7 +163,7 @@ describe("post hooks", () => {
         userId: 1,
       },
       expect.objectContaining({
-        signal: expect.any(AbortSignal),
+        signal: expect.any(AbortSignal) as unknown,
       }),
     );
     expect(result.current.data).toEqual({
@@ -202,7 +208,9 @@ describe("post hooks", () => {
       });
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
 
     expect(mockedPostsApi.patch).toHaveBeenCalledTimes(1);
     expect(mockedPostsApi.patch).toHaveBeenCalledWith(
@@ -212,7 +220,7 @@ describe("post hooks", () => {
         completed: true,
       },
       expect.objectContaining({
-        signal: expect.any(AbortSignal),
+        signal: expect.any(AbortSignal) as unknown,
       }),
     );
     expect(result.current.data).toEqual({
@@ -241,13 +249,15 @@ describe("post hooks", () => {
       await result.current.mutateAsync(1);
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
 
     expect(mockedPostsApi.delete).toHaveBeenCalledTimes(1);
     expect(mockedPostsApi.delete).toHaveBeenCalledWith(
       1,
       expect.objectContaining({
-        signal: expect.any(AbortSignal),
+        signal: expect.any(AbortSignal) as unknown,
       }),
     );
   });
@@ -283,7 +293,9 @@ describe("post hooks", () => {
       });
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
 
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: postQueryKeys.byId(10),
@@ -298,7 +310,9 @@ describe("post hooks", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
 
     expect(result.current.data).toEqual([
       { title: "Default Post", completed: false, userId: 1, id: 1 },
@@ -319,7 +333,9 @@ describe("post hooks", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
 
     expect(mockedPostsApi.getAll).toHaveBeenCalledTimes(1);
     expect(result.current.data).toEqual([
@@ -339,7 +355,9 @@ describe("post hooks", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
 
     expect(postsApi.getAll).toHaveBeenCalledTimes(1);
     expect(result.current.data).toEqual([

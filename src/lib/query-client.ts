@@ -12,6 +12,7 @@ export default function getQueryClient() {
   if (environmentManager.isServer()) {
     return makeQueryClient();
   } else {
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- more verbose this way
     if (!browserQueryClient) {
       browserQueryClient = makeQueryClient();
     }

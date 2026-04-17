@@ -3,8 +3,10 @@ import {
   MutationCache,
   QueryCache,
 } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
+import { ZodError } from "zod";
 
-import { isAppError } from "@/utils/handle-api-error";
+import { ApiErrorResponse } from "@/types/api.types";
 
 // Jitter Strategy
 // Docs: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
@@ -14,88 +16,56 @@ const decorrelatedRetryDelay = (attemptIndex: number) => {
   return Math.random() * base;
 };
 
+const shouldRetry = (failureCount: number, error: unknown): boolean => {
+  if (error instanceof ZodError) return false;
+
+  if (isAxiosError<ApiErrorResponse>(error)) {
+    const { code } = error;
+    const status = error.response?.status;
+
+    if (code === "ERR_NETWORK" || code === "ECONNABORTED" || !error.response)
+      return false;
+    if (status && status >= 400 && status < 500) return false;
+  }
+
+  return failureCount < 3;
+};
+
+const handleError = (error: unknown): void => {
+  if (error instanceof ZodError) {
+    console.error(`Validation error: ${error.message}`);
+    return;
+  }
+
+  if (isAxiosError<ApiErrorResponse>(error)) {
+    const message = error.response?.data.message ?? error.message;
+    console.error(message);
+    return;
+  }
+
+  console.error("Unknown error");
+};
+
 const queryClientConfig: QueryClientConfig = {
   defaultOptions: {
     queries: {
-      retry: (failureCount, error) => {
-        if (!isAppError(error)) return false;
-
-        if (error.kind === "validation") return false;
-        if (error.kind === "axios") {
-          const { code } = error.error;
-          const status = error.error.response?.status;
-          if (
-            code === "ERR_NETWORK" ||
-            code === "ECONNABORTED" ||
-            !error.error.response
-          )
-            return false;
-          if (status && status >= 400 && status < 500) return false;
-        }
-        return failureCount < 3;
-      },
       retryDelay: decorrelatedRetryDelay,
       staleTime: 5 * 1000,
+      retry: shouldRetry,
     },
 
     mutations: {
-      retry: (failureCount, error) => {
-        if (!isAppError(error)) return false;
-
-        if (error.kind === "validation") return false;
-        if (error.kind === "axios") {
-          const { code } = error.error;
-          const status = error.error.response?.status;
-          if (
-            code === "ERR_NETWORK" ||
-            code === "ECONNABORTED" ||
-            !error.error.response
-          )
-            return false;
-          if (status && status >= 400 && status < 500) return false;
-        }
-        return failureCount < 3;
-      },
       retryDelay: decorrelatedRetryDelay,
+      retry: shouldRetry,
     },
   },
   mutationCache: new MutationCache({
     // Global onErrorHandler for useQuery
-    onError: (error) => {
-      if (!isAppError(error)) {
-        console.error("Unknown error");
-        return;
-      }
-
-      if (error.kind === "axios") {
-        const message =
-          error.error.response?.data.message || error.error.message;
-        console.error(message);
-      } else if (error.kind === "validation") {
-        console.error(`Validation error: ${error.error.message}`);
-      } else {
-        console.error("Unknown error");
-      }
-    },
+    onError: handleError,
   }),
   queryCache: new QueryCache({
     // Global onErrorHandler for useQuery
-    onError: (error) => {
-      if (!isAppError(error)) {
-        console.error("Unknown error");
-        return;
-      }
-
-      if (error.kind === "axios") {
-        const message =
-          error.error.response?.data.message || error.error.message;
-        console.error(message);
-      } else if (error.kind === "validation") {
-        console.error(`Validation error: ${error.error.message}`);
-      } else {
-        console.error("Unknown error");
-      }
-    },
+    onError: handleError,
   }),
 };
 

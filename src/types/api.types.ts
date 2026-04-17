@@ -2,15 +2,16 @@ import { z } from "zod";
 
 import { metaSchema } from "@/schemas/api.schemas";
 
-type ApiErrorResponse = {
+interface ApiErrorResponse {
   statusCode: number;
   message: string;
   code: string;
-};
-
-type ApiResponse<T> = {
-  meta: z.infer<typeof metaSchema>;
+}
+interface ApiResponse<T> {
+  meta: ApiMeta;
   data: T;
-};
+}
 
-export type { ApiErrorResponse, ApiResponse };
+type ApiMeta = z.infer<typeof metaSchema>;
+
+export type { ApiErrorResponse, ApiResponse, ApiMeta };

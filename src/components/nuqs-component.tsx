@@ -6,12 +6,12 @@ export default function NuqsComponent() {
   const [name, setName] = useQueryState("name");
   return (
     <>
-      <h1>Hello, {name || "anonymous visitor"}!</h1>
+      <h1>Hello, {name ?? "anonymous visitor"}!</h1>
       <input
-        onChange={(event) => setName(event.target.value)}
-        value={name || ""}
+        onChange={(event) => void setName(event.target.value)}
+        value={name ?? ""}
       />
-      <button onClick={() => setName(null)}>Clear</button>
+      <button onClick={() => void setName(null)}>Clear</button>
     </>
   );
 }

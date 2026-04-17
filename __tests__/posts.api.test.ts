@@ -1,11 +1,12 @@
 import { postsApi } from "@/features/featureA/services/post.api";
+import { ApiMeta } from "@/types/api.types";
 
 import { createServer } from "../mocks/create-server";
 
 const BASE_URL = "http://localhost:3001";
 
 const mockMeta = {
-  timestamp: new Date().toISOString(),
+  timestamp: "2024-01-15T10:30:00.000Z",
   requestId: "req-123",
   traceId: "trace-123",
 };
@@ -64,10 +65,10 @@ describe("postsApi", () => {
 
     expect(result).toEqual({
       meta: expect.objectContaining({
-        timestamp: expect.any(String),
+        timestamp: "2024-01-15T10:30:00.000Z",
         requestId: "req-123",
         traceId: "trace-123",
-      }),
+      }) as ApiMeta,
       data: [
         {
           title: "Test title",
@@ -84,7 +85,7 @@ describe("postsApi", () => {
 
     expect(result).toEqual({
       meta: expect.objectContaining({
-        timestamp: expect.any(String),
+        timestamp: "2024-01-15T10:30:00.000Z",
         requestId: "req-123",
         traceId: "trace-123",
       }),
@@ -108,7 +109,7 @@ describe("postsApi", () => {
 
     expect(result).toEqual({
       meta: expect.objectContaining({
-        timestamp: expect.any(String),
+        timestamp: "2024-01-15T10:30:00.000Z",
         requestId: "req-123",
         traceId: "trace-123",
       }),
@@ -130,7 +131,7 @@ describe("postsApi", () => {
 
     expect(result).toEqual({
       meta: expect.objectContaining({
-        timestamp: expect.any(String),
+        timestamp: "2024-01-15T10:30:00.000Z",
         requestId: "req-123",
         traceId: "trace-123",
       }),

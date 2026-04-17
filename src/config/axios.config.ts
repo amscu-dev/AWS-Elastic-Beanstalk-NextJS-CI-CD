@@ -12,7 +12,7 @@ axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
-  async (error: AxiosError) => {
+  (error: AxiosError) => {
     throw error;
   },
 );

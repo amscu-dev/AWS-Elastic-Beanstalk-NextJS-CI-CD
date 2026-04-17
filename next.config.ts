@@ -96,7 +96,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const baseConfig: NextConfig = {
-  async headers() {
+  headers() {
     return [secHeaders];
   },
   /* config options here */

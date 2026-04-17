@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import { customAxiosInstance } from "@/config/axios.config";
 import { apiResponseSchema } from "@/schemas/api.schemas";
-import { toAppError } from "@/utils/handle-api-error";
 import { OptionalConfig } from "@/types/axios.types";
 import { ApiResponse } from "@/types/api.types";
 
@@ -17,12 +16,13 @@ export const postsApi = {
   ): Promise<ApiResponse<Post>> => {
     try {
       const response = await customAxiosInstance<ApiResponse<Post>>(
-        { url: `/posts/${id}`, method: "PATCH", data: body },
+        { url: `/posts/${String(id)}`, method: "PATCH", data: body },
         optionalAxiosConfig,
       );
       return apiResponseSchema(postSchema).parse(response);
     } catch (error) {
-      throw toAppError(error);
+      console.error(error);
+      throw error;
     }
   },
 
@@ -37,7 +37,8 @@ export const postsApi = {
       );
       return apiResponseSchema(postSchema).parse(response);
     } catch (error) {
-      throw toAppError(error);
+      console.error(error);
+      throw error;
     }
   },
 
@@ -47,12 +48,13 @@ export const postsApi = {
   ): Promise<ApiResponse<Post>> => {
     try {
       const response = await customAxiosInstance<ApiResponse<Post>>(
-        { url: `/posts/${id}`, method: "GET" },
+        { url: `/posts/${String(id)}`, method: "GET" },
         optionalAxiosConfig,
       );
       return apiResponseSchema(postSchema).parse(response);
     } catch (error) {
-      throw toAppError(error);
+      console.error(error);
+      throw error;
     }
   },
 
@@ -66,21 +68,24 @@ export const postsApi = {
       );
       return apiResponseSchema(z.array(postSchema)).parse(response);
     } catch (error) {
-      throw toAppError(error);
+      console.error(error);
+      throw error;
     }
   },
 
   delete: async (
     id: number,
     optionalAxiosConfig?: OptionalConfig,
-  ): Promise<void> => {
+  ): Promise<undefined> => {
     try {
       await customAxiosInstance<unknown>(
-        { url: `/posts/${id}`, method: "DELETE" },
+        { url: `/posts/${String(id)}`, method: "DELETE" },
         optionalAxiosConfig,
       );
+      return undefined;
     } catch (error) {
-      throw toAppError(error);
+      console.error(error);
+      throw error;
     }
   },
 };

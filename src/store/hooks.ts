@@ -46,6 +46,7 @@ const useAppStore = useStore.withTypes<AppStore>();
  * );
  * ```
  */
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- no need to double use this generic
 const createProxySelectorHook = <TState extends object>() => {
   const useTypedSelector = useSelector.withTypes<TState>();
 
@@ -53,7 +54,6 @@ const createProxySelectorHook = <TState extends object>() => {
     function_: (state: TState) => TReturnType,
     deps: React.DependencyList = [],
   ): TReturnType => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- need to receive deps dynamic from component
     const selector = useMemo(() => memoize(function_), deps);
     return useTypedSelector(selector);
   };

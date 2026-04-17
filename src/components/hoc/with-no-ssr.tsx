@@ -1,9 +1,9 @@
 import { ComponentType, ReactNode } from "react";
 import { useIsClient } from "@uidotdev/usehooks";
 
-type WithNoSSROptions = {
+interface WithNoSSROptions {
   fallback?: ReactNode;
-};
+}
 
 export const withNoSSR = <P extends object>(
   WrappedComponent: ComponentType<P>,
@@ -20,7 +20,7 @@ export const withNoSSR = <P extends object>(
   };
 
   NoSSRComponent.displayName = `withNoSSR(${
-    WrappedComponent.displayName || WrappedComponent.name || "Component"
+    (WrappedComponent.displayName ?? WrappedComponent.name) || "Component"
   })`;
 
   return NoSSRComponent;
