@@ -97,7 +97,7 @@
     "@uidotdev/usehooks": "^2.4.1",
     "axios": "1.15.0",
     "fast-memoize": "^2.5.2",
-    "flagsmith-nodejs": "^8.0.2",
+    "flagsmith-nodejs": "^8.1.0",
     "next": "16.2.3",
     "next-themes": "^0.4.6",
     "nuqs": "^2.8.9",
