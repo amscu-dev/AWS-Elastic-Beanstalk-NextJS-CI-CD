@@ -87,7 +87,7 @@
     }
   },
   "dependencies": {
-    "@changesets/cli": "^2.30.0",
+    "@changesets/cli": "^2.31.0",
     "@next/bundle-analyzer": "^16.2.3",
     "@reduxjs/toolkit": "^2.11.2",
     "@sentry/nextjs": "^10.48.0",
